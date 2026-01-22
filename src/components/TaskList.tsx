@@ -1,20 +1,30 @@
-import {Task} from "./Task.tsx";
+import {TaskItem} from "./TaskItem.tsx";
 import {Button} from "./Buttons.tsx";
 import {PlusIcon} from "@phosphor-icons/react";
+import {type Task, TaskState} from "../models/task.ts";
+import useTask from "../hooks/useTask.ts";
 
 export const TaskList = () => {
+    const {tasks, prepareTask} = useTask();
+
+    function handleNewTask() {
+        prepareTask();
+    }
+
     return (
         <div className="flex w-full flex-col gap-4">
             <h2 className="text-2xl font-bold mb-4">Task List</h2>
             <section className="flex flex-col items-center">
-                <Button><PlusIcon className="mr-2"/>Adicionar Nova Tarefa</Button>
+                <Button onClick={handleNewTask} disabled={tasks.some(
+                    task => task.state === TaskState.CREATING
+                )}>
+                    <PlusIcon className="mr-2"/>Adicionar Nova Tarefa
+                </Button>
             </section>
-            <section>
-                <Task/>
-                <Task/>
-                <Task/>
-                <Task/>
-                <Task/>
+            <section className={`flex flex-col items-center gap-8`}>
+                {tasks.map((task: Task) => (
+                    <TaskItem key={task.id} task={task}/>
+                ))}
             </section>
         </div>
     );
