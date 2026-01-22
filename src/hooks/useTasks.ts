@@ -1,27 +1,17 @@
 import { useLocalStorage } from "usehooks-ts";
-import { type Task, TASKS_KEY, TaskStatus } from "../models/task";
-import { useState } from "react";
+import { type Task, TASKS_KEY, TaskStatus, TaskState } from "../models/task";
 
 export default function useTasks() {
-    const [storedTasks] = useLocalStorage<Task[]>(TASKS_KEY, []);
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [tasks] = useLocalStorage<Task[]>(TASKS_KEY, []);
 
-    async function getTasks() {
-        if (isLoading) return;
-
-        setIsLoading(true);
-        setTasks(storedTasks);
-        setIsLoading(false);
-    }
+    const createdTasks = tasks.filter(task => task.state === TaskState.CREATED).length;
+    const concludedTasks = tasks.filter(task => task.status === TaskStatus.COMPLETED).length;
+    const totalTasks = tasks.filter(task => task.state !== TaskState.CREATING).length;
 
     return {
         tasks,
-        createdTasks: tasks.length,
-        concludedTasks: tasks.filter(
-            task => task.status === TaskStatus.COMPLETED
-        ).length,
-        isLoading,
-        getTasks
+        createdTasks,
+        concludedTasks,
+        totalTasks
     };
 }

@@ -1,12 +1,15 @@
 import {useLocalStorage} from "usehooks-ts";
 import {TASKS_KEY, type Task, TaskStatus, TaskState} from "../models/task.ts";
 import {useState} from "react";
+import useTasks from "./useTasks.ts";
 
 
 export default function useTask() {
     const [tasks, setTasks] = useLocalStorage<Task[]>(TASKS_KEY, [])
     const [isUpdating, setIsUpdating] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const {createdTasks, concludedTasks, totalTasks} = useTasks();
 
     function prepareTask(){
         setTasks([
@@ -68,6 +71,9 @@ export default function useTask() {
         updateTask,
         updateTaskStatus,
         deleteTask,
+        createdTasks,
+        concludedTasks,
+        totalTasks
     }
 
 }
